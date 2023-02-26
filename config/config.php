@@ -9,7 +9,8 @@
  * @link
  */
 
-define('APP_NAME', 'CSS Framework');
+// App Config
+define('APP_NAME', 'Dnasa App');
 define('APP_VERSION', '1.0.0');
 define('TIMEZONE', 'America/Panama');
 define('LANG', 'es_PA');
@@ -17,12 +18,12 @@ define('CHARSET', 'UTF-8');
 define('CREATEOR', 'ferncastillo');
 define('EMAIL', 'ferncastillo@css.gob.pa');
 
+// PHP
 if (!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
-
-
+// Protocol
 define('PROTOCOL', strtolower(explode('/', $_SERVER['SERVER_PROTOCOL'])[0]));
 define('DEBUG', $_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1' ? true : false);
 define('APP_ENV', DEBUG ? 'dev' : 'prod');
@@ -59,6 +60,7 @@ define('PATH_APP_CONTROLLERS', PATH_APP . 'controllers' . DS);
 define('PATH_APP_MODULES', PATH_APP . 'modules' . DS);
 define('PATH_APP_MODELS', PATH_APP . 'models' . DS);
 define('PATH_APP_VIEWS', PATH_APP . 'views' . DS);
+define('PATH_APP_LAYOUTS', PATH_APP . 'layouts' . DS);
 define('PATH_APP_LIBS', PATH_APP . 'libs' . DS);
 define('PATH_CONFIG', ROOT . 'config' . DS);
 define('PATH_CORE', ROOT . 'core' . DS);
@@ -117,6 +119,13 @@ if (CACHE_DRIVER == 'file') {
       mkdir(PATH_STORAGE_CACHE, 0777, true);
    }
 }
+
+if (SESSION_DRIVER == 'file') {
+   if (!file_exists(PATH_STORAGE_SESSIONS)) {
+      mkdir(PATH_STORAGE_SESSIONS, 0777, true);
+   }
+}
+
 
 
 if (DEBUG) {

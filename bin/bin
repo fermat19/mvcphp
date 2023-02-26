@@ -1,0 +1,192 @@
+<?php
+
+/**
+ * @authors CSS DENIT
+ * @date    2023-02-25 11:42:17
+ * @version ${1.0.0}
+ * @description: 
+ */
+
+namespace Bin;
+
+class Bin {
+
+   public function __construct() {
+      //path config
+      define('DS', DIRECTORY_SEPARATOR);
+      define('ROOT', dirname(__DIR__) . DS);
+      define('PATH_APP', ROOT . 'app' . DS);
+      define('PATH_APP_MODULES', PATH_APP . 'modules' . DS);
+      define('PATH_APP_MODELS', PATH_APP . 'models' . DS);
+      $this->run();
+   }
+   private function mostrarMenu() {
+      // system('clear');
+      echo "\n========== Menu ==========\n";
+      echo "1. Crear módulo\n";
+      echo "2. Crear modelo\n";
+      echo "0. Salir\n";
+      echo "==========================\n";
+      echo "Ingrese una opción: ";
+      $opcion = trim(fgets(STDIN));
+      echo "\n";
+      return $opcion;
+   }
+
+   private function crearModulo() {
+      $modulo = $this->input("Ingrese el nombre del módulo");
+      $modulo = strtolower($modulo);
+      $moduloPath = PATH_APP_MODULES . $modulo . DS;
+      $vistasPath = $moduloPath . '/views';
+      $jsPath = $moduloPath . '/js';
+      if (is_dir($moduloPath)) {
+         echo 'El módulo ya existe';
+         return;
+      }
+      mkdir($moduloPath, 0777, true);
+      mkdir($vistasPath, 0777, true);
+      mkdir($jsPath, 0777, true);
+      $content = $this->templateModule($modulo);
+      file_put_contents($moduloPath . ucfirst($modulo) . 'Module.php', $content);
+      $vcontent = $this->templateView();
+      file_put_contents($vistasPath . '/index.php', $vcontent);
+      echo "Módulo $modulo creado correctamente\n";
+      echo "|- $modulo/\n";
+      echo "|--|- " . ucfirst($modulo) . "Module.php\n";
+      echo "|--|- views/\n";
+      echo "|--|- js/\n";
+   }
+
+   private function crearModelo() {
+      $modelo = $this->input("Ingrese el nombre del modelo ``Ejemplo: admin/usuario``");
+      $modelo = strtolower($modelo);
+      $modelo = str_replace(' ', '', $modelo);
+      $modelo = explode('/', $modelo);
+      if (count($modelo) > 1) {
+         $modelo[count($modelo) - 1] = ucfirst($modelo[count($modelo) - 1]);
+         $modelo_file = end($modelo);
+         $modelo_path = PATH_APP_MODELS . implode(DS, array_slice($modelo, 0, count($modelo) - 1));
+         !file_exists($modelo_path) ?? mkdir($modelo_path);
+         if (!file_exists($modelo_path)) {
+            if (!mkdir($modelo_path, 0777, true)) {
+               echo 'Error al crear el directorio';
+               return;
+            }
+         }
+      } else {
+         $modelo_path = PATH_APP_MODELS;
+         $modelo_file =  ucfirst($modelo[0]);
+      }
+
+      $modeloPath = $modelo_path . DS . $modelo_file . '.php';
+      if (is_file($modeloPath)) {
+         echo 'El modelo ya existe';
+         return;
+      }
+
+      $content = $this->templateModel($modelo_file);
+      try {
+         file_put_contents($modeloPath, $content);
+         echo "Modelo creado correctamente";
+      } catch (\Exception $e) {
+         print_r($e);
+      }
+   }
+
+   private function input($mensaje) {
+      echo $mensaje . ": ";
+      $valor = trim(fgets(STDIN));
+      echo "\n";
+      return $valor;
+   }
+
+   private function templateModule($modulo) {
+      return "<?php
+/**
+ * @authors CSS DENIT
+ * @date    {date('Y-m-d H:i:s')}
+ * @version 1.0.0
+ * @description: 
+ */
+namespace App\Modules\\$modulo;
+
+use Src\Http\Request;
+use Src\Http\Response;
+
+class $modulo {
+   public function index(Request \$req, Response \$res) {
+      \$data['title'] = '$modulo';
+      \$res->view('index', \$data);
+   }
+}
+      ";
+   }
+
+   private function templateModel($modelo) {
+      return "<?php
+
+/**
+ * @authors CSS DENIT
+ * @date    {date('Y-m-d H:i:s')}
+ * @version 1.0.0
+ * @description: 
+ */
+
+namespace App\Models;
+
+use Src\Database\Model;
+
+class $modelo implements \Src\Models\ModelInterface {
+   public static function listar(\$params = []) {
+      \$sql = '';
+      \$data = \Src\Models\Model::listar(\$sql, \$params);
+      return \$data;
+   }
+
+   public static function crear(\$params = []) {
+      \$sql = '';
+      \$data = \Src\Models\Model::crear(\$sql, \$params);
+      return \$data;
+   }
+
+   public static function actualizar(\$params = []) {
+      \$sql = '';
+      \$data = \Src\Models\Model::actualizar(\$sql, \$params);
+      return \$data;
+   }
+
+   public static function eliminar(\$params = []) {
+      \$sql = '';
+      \$data = \Src\Models\Model::eliminar(\$sql, \$params);
+      return \$data;
+   }
+}
+      ";
+   }
+
+   private function templateView() {
+      return "<div class='row'><div class='col-md-12'><div class='card'></div></div></div>";
+   }
+
+   public function run() {
+      while (true) {
+         $opcion = $this->mostrarMenu();
+         switch ($opcion) {
+            case 1:
+               $this->crearModulo();
+               break;
+            case 2:
+               $this->crearModelo();
+               break;
+            case 0:
+               exit;
+               break;
+            default:
+               echo "Opción inválida";
+               break;
+         }
+      }
+   }
+}
+
+$bin = new Bin();

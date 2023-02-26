@@ -13366,7 +13366,7 @@ fieldset:disabled .swal2-modal .swal2-buttonswrapper .swal2-styled,
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid #e3e3e3;
-  border-radius: 20px;
+  border-radius: 0px;
 }
 
 .card > hr {
@@ -22793,7 +22793,7 @@ code {
 .card .card-title {
   color: #010101;
   margin-bottom: 1.2rem;
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
   font-size: 1.125rem;
   font-weight: 600;
 }
