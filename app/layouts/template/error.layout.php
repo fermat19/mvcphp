@@ -13,10 +13,9 @@
 </head>
 
 <body>
-   <div class="container-fluid">
-      <h1><?= $title ?></h1>
-      @content
-   </div>
+
+   @content
+
    <script src="<?= APP_PUBLIC ?>assets/js/jquery.min.js"></script>
    <script src="<?= APP_PUBLIC ?>assets/js/popper.min.js"></script>
    <script src="<?= APP_PUBLIC ?>assets/js/bootstrap.min.js"></script>

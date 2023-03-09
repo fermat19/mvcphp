@@ -82,8 +82,13 @@ class Request {
       $this->body = $body;
    }
 
-   public function setParams($params) {
-      $this->params = $params;
+   public function setParams($key, $value) {
+      // si existe la llave en el arreglo params se agrega el valor, sino, se crea una nueva llave con el valor
+      if (isset($this->params[$key])) {
+         array_push($this->params[$key], $value);
+      } else {
+         $this->params[$key] = $value;
+      }
    }
 
    public function setQuery($query) {
@@ -127,9 +132,10 @@ class Request {
    private static function cleanInput($input) {
       $search = array(
          '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-         '@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
-         '@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
-         '@<![\s\S]*?--[ \t\n\r]*>@', // Strip multi-line comments
+'@<[\ /\!]*?[^<>]*?>@si', // Strip out HTML tags
+   '@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
+      '@
+      <![\s\S]*?--[ \t\n\r]*>@', // Strip multi-line comments
          // sql injection 
          '@SELECT\s+.*?\s+FROM\s+.*?\s+WHERE\s+.*?\s+LIKE\s+.*?@si',
       );

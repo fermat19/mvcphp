@@ -68,6 +68,7 @@ class HandlerException extends \Src\Exceptions\CoreExceptions {
          define('ERROR_HANDLER', true);
          $data = [
             'title' => $code,
+            'code' => $code,
             'class' => get_class($e),
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
@@ -75,7 +76,7 @@ class HandlerException extends \Src\Exceptions\CoreExceptions {
             'trace' => $e->getTraceAsString()
          ];
          $view = new \Src\Views\Engine();
-         echo $view->render('error/errors', $data);
+         echo $view->render('errors', $data);
       }
       return true;
    }

@@ -14,13 +14,15 @@ use \Src\Routing\Routes;
 class Router {
    protected static function getModulePath() {
       $module = Routes::getModule();
-      $modulePath = PATH_APP_MODULES . $module  . DS . ucfirst($module) . 'Module.php';
+      $component = Routes::getComponent();
+      $modulePath = PATH_APP_MODULES . $module  . DS . ucfirst($component) . 'Component.php';
       return $modulePath;
    }
 
    protected static function getModuleClass() {
       $module = Routes::getModule();
-      $moduleClass = 'App\\Modules\\' . ucfirst($module) . '\\' . ucfirst($module) . 'Module';
+      $component = Routes::getComponent();
+      $moduleClass = 'App\\Modules\\' . ucfirst($module) . '\\' . ucfirst($component) . 'Component';
       return $moduleClass;
    }
 
@@ -34,9 +36,11 @@ class Router {
          // TODO: cargamos el registro de access_log
 
          // TODO:: agregar los parametros a un objeto Request
-         $params = ['req' => new \Src\Http\Request(), 'res' => new \Src\Http\Response()];
          if (method_exists($module, Routes::getAction())) {
-            $params = array_merge($params, Routes::getParams());
+            $req = new \Src\Http\Request();
+            $res = new \Src\Http\Response();
+            $req->setParams('uri', Routes::getParams());
+            $params = ['req' => $req, 'res' => $res];
             call_user_func_array([$module, Routes::getAction()], $params);
          } else {
             throw new \Exception('Action not found');

@@ -11,6 +11,7 @@ namespace Src\Routing;
 
 class Routes {
    protected static $module = null;
+   protected static $component = null;
    protected static $action = null;
    protected static $params = [];
 
@@ -35,6 +36,17 @@ class Routes {
          self::$module = 'home';
       }
       return self::$module;
+   }
+
+   public static function getComponent() {
+      $url = self::parseUrl();
+      if (count($url) > 1) {
+         self::$component = $url[1];
+         unset($url);
+      } else {
+         self::$component = 'home';
+      }
+      return self::$component;
    }
 
    public static function getAction() {
